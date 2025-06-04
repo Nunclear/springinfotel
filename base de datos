@@ -1,0 +1,71 @@
+BASE DE DATOS
+
+
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    correo VARCHAR(100) UNIQUE,
+    contrasena VARCHAR(255),
+    rol ENUM('ADMIN', 'CLIENTE') DEFAULT 'CLIENTE',
+    direccion TEXT,
+    telefono VARCHAR(20),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE categorias (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    descripcion TEXT
+);
+CREATE TABLE productos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150),
+    descripcion TEXT,
+    precio DECIMAL(10,2),
+    stock INT,
+    categoria_id INT,
+    imagen_url VARCHAR(255),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+CREATE TABLE carrito_compras (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    producto_id INT,
+    cantidad INT,
+    fecha_agregado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
+CREATE TABLE pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    total DECIMAL(10,2),
+    estado ENUM('PENDIENTE', 'ENVIADO', 'ENTREGADO', 'CANCELADO') DEFAULT 'PENDIENTE',
+    fecha_pedido TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+CREATE TABLE pedido_detalle (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pedido_id INT,
+    producto_id INT,
+    cantidad INT,
+    precio_unitario DECIMAL(10,2),
+    FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+    FOREIGN KEY (producto_id) REFERENCES productos(id)
+);
+CREATE TABLE chatbot_historial (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    mensaje_usuario TEXT,
+    respuesta_chatbot TEXT,
+    tipo ENUM('INFORMATIVO', 'RECOMENDACION'),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+CREATE TABLE reportes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_reporte VARCHAR(100),
+    descripcion TEXT,
+    fecha_generado TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    datos JSON
+);
